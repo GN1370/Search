@@ -1,1 +1,41 @@
-<p>search works!</p>
+<div class="search-container">
+  <h1>Search</h1>
+
+  <div class="search-box">
+    <input
+      type="text"
+      [(ngModel)]="searchValue"
+      (input)="onSearchChange()"
+      placeholder="Search articles..."
+      class="search-input">
+    @if (searchValue) {
+      <button
+        (click)="clearSearch()"
+        class="clear-button"
+        aria-label="Clear search">×</button>
+    }
+  </div>
+
+  @if (searchValue && searchService.getResultCount() > 0) {
+    <div class="results-info">
+      {{ searchService.getResultCount() }} posts were found.
+    </div>
+  }
+
+  <div class="results">
+    @for (article of searchService.filteredArticles(); track article.id) {
+      <article class="article-card">
+        <h2 [innerHTML]="highlightText(article.title)"></h2>
+        <p class="date">{{ article.date }}</p>
+        <p [innerHTML]="highlightText(article.content)"></p>
+      </article>
+    } @empty {
+      @if (searchValue) {
+        <div class="no-results">
+          <p>No articles found for "{{ searchValue }}"</p>
+          <p class="suggestion">Try searching for different keywords.</p>
+        </div>
+      }
+    }
+  </div>
+</div>
